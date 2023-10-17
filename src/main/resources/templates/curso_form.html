@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <title>Gestión de cursos</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+
+<div class="container" th:replace="fragments/header::header"></div>
+
+<br>
+
+<div class="container-fluid">
+  <h2 class="text-center">[[${pageTitle}]]</h2>
+
+  <div class="my-3">
+    <form th:action="@{/cursos/save}" method="post" enctype="multipart/form-data" th:object="${curso}" style="max-width: 550px; margin: 0 auto;">
+      <input type="hidden" th:field="*{id}" />
+      <div class="p-3">
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="titulo">Titulo</label>
+          <div class="col-sm-9">
+            <input type="text" th:field="*{titulo}" required minlength="2" maxlength="128" class="form-control" id="titulo">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="descripcion">Descripción</label>
+          <div class="col-sm-9">
+            <input type="text" th:field="*{descripcion}" required minlength="2" maxlength="256" class="form-control" id="descripcion">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="nivel">Nivel</label>
+          <div class="col-sm-9">
+            <input type="text" th:field="*{nivel}" required min="2" class="form-control" id="nivel">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-3 col-check-label" for="nivel">Publicado</label>
+          <div class="col-sm-9">
+            <input type="checkbox" th:field="*{publicado}" />
+          </div>
+        </div>
+
+        <div class="text-center">
+          <input type="submit" value="Guardar" class="btn btn-primary btn-sm mr-2" />
+          <input type="submit" value="Cancelar" id="btnCancelar" class="btn btn-secondary btn-sm" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnCancelar").on("click", function() {
+                window.location="[[@{/cursos}]]";
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="UTF-8">
+    <title>Gestión de cursos</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+
+<div class="container" th:replace="fragments/header::header"></div>
+
+<br>
+
+<div class="container mb-5">
+    <div class="container mb-5">
+        <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message">
+            [[${message}]]
+            <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Cerrar">
+                <span aria-hidde="true">✖</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div class="container my-3">
+    <form id="searchForm" th:action="@{/cursos}">
+        <div class="row d-flex">
+            <div class="col-md-6 mt-2">
+                <div class="search">
+                    <i class="fa fa-search"></i>
+                    <input id="keyword" type="search" name="keyword" th:value="${keyword}" required
+                           class="form-control" placeholder="Ingrese un nombre"/>
+                    <br>
+                    <button type="submit" class="btn btn-secondary">Buscar</button>
+                </div>
+            </div>
+            <div class="col-md-3 input-group mt-3">
+                <div class="input group-prepend">
+                    <label class="input-group-text" for="pageSize">Elementos por página</label>
+                </div>
+                <select form="searchForm" name="size" th:value="${pageSize}" onchange="changePageSize()"
+                        class="size-select" id="pageSize">
+                    <option th:each="s : ${ { 3, 6, 9} }" th:value="${s}" th:text="${s}"
+                            th:selected="${s == pageSize}">
+                    </option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container" th:if="${cursos.size() > 0}">
+    <div class="row mb-3">
+        <div class="col-md-12 d-flex justify-content-start">
+            <a th:href="@{/export/pdf}" class="btn btn-danger">Generar PDF</a>
+            &nbsp;&nbsp;
+            <a th:href="@{/export/excel}" class="btn btn-success">Generar excel</a>
+        </div>
+    </div>
+    <table class="table table-hover table-responsive-xl">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Titulo</th>
+            <th>Descripcion</th>
+            <th>Nivel</th>
+            <th>Publicado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="curso : ${cursos}">
+            <td>[[${curso.id}]]</td>
+            <td>[[${curso.titulo}]]</td>
+            <td>[[${curso.descripcion}]]</td>
+            <td>[[${curso.nivel}]]</td>
+            <td>
+                <a th:if="${curso.isPublicado == true}" class="fa-regular fa-square-check"></a>
+                <a th:if="${curso.isPublicado == false}" class="fa-regular fa-square icon-dark"></a>
+            </td>
+            <td>
+                <a th:href="@{'/cursos/' + ${curso.id}}" title="Editar curso"
+                   class="fa-regular fa-pen-to-square icon-dark btn btn-primary">
+                </a>
+                <a th:href="@{'/cursos/delete/' + ${curso.id}}" title="Eliminar curso" id="btnDelete"
+                   class="fa-regular fa-trash-can icon-dark btn btn-danger">
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="container" th:unless="${cursos.size() > 0}">
+    <span>Cursos no encontrados</span>
+</div>
+
+<nav aria-label="Pagination" th:if="${totalPages > 0}">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+            <a th:replace="fragments/paging :: paging(1,'<<','Primera página')"></a>
+        </li>
+        <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+            <a th:replace="fragments/paging :: paging(${currentPage-1},'Anterior','Anterior página')"></a>
+        </li>
+        <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+            <a class="page-link" href="#">...</a>
+        </li>
+        <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+            th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1,currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+            <a th:replace="fragments/paging :: paging(${page},${page},'Page' + ${page})"></a>
+        </li>
+        <li class="page-item disabled" th:if="${currentPage + 2 > totalPages}">
+            <a class="page-link" href="#">...</a>
+        </li>
+        <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+            <a th:replace="fragments/paging :: paging(${currentPage + 1},'Siguiente','Siguiente página')"></a>
+        </li>
+        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+            <a th:replace="fragments/paging :: paging(${totalPages},'>>','Última página')"></a>
+        </li>
+    </ul>
+</nav>
+
+<script type="text/javascript">
+       function changePageSize(){
+           $("#searchForm").submit();
+       }
+   </script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+</body>
+</html>
