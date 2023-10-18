@@ -9,12 +9,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.util.List;
 
 
-
+@Controller
 public class CursosExporterExcel {
     private XSSFWorkbook workbook;  //se importa la dependencia correspondiente para que funcione correctamente
     private XSSFSheet sheet;

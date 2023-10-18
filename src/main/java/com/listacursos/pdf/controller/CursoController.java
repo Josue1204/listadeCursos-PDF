@@ -27,7 +27,7 @@ public class CursoController {
         model.addAttribute("cursos", cursos);
         return "cursos";
     }
-    @GetMapping("/cursos/nuevo")
+    @GetMapping("/cursos/nuevo")//metodo para agregar un nuevo curso
     public String agregarCurso(Model model){
         Curso curso=new Curso();
         curso.setPublicado(true);
@@ -35,7 +35,7 @@ public class CursoController {
         model.addAttribute("pageTitle","Nuevo Curso");
         return "curso_form";
     }
-    @PostMapping("/cursos/save")
+    @PostMapping("/cursos/save")//metodo para guardar el curso creado
     public String guardarCurso(Curso curso, RedirectAttributes redirectAttributes){
         try {
             cursoRepository.save(curso);
