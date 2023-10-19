@@ -1,7 +1,10 @@
 package com.listacursos.pdf.controller;
 
 import com.listacursos.pdf.entity.Curso;
+import com.listacursos.pdf.reports.CursosExporterExcel;
+import com.listacursos.pdf.reports.CursosExporterPDF;
 import com.listacursos.pdf.repository.CursoRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -105,6 +112,36 @@ public class CursoController {
             redirectAttributes.addFlashAttribute("message",exception.getMessage());
         }
         return "redirect:/cursos";
+    }
+    @GetMapping("/export/pdf")
+    public void generarReportePDF(HttpServletResponse response)throws IOException{
+        response.setContentType("application/pdf");
+        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime= dateFormat.format(new Date());
+
+        String headerKey="Content-Disposition";
+        String headerValue="attachment; filename=cursos"+currentDateTime+".pdf";
+        response.setHeader(headerKey,headerValue);
+
+        List<Curso>cursos=cursoRepository.findAll();
+
+        CursosExporterPDF exporterPDF=new CursosExporterPDF(cursos);
+        exporterPDF.export(response);
+    }
+    @GetMapping("/export/excel")
+    private void generarReporteExcel(HttpServletResponse response)throws IOException{
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime= dateFormat.format(new Date());
+
+        String headerKey="content-Disposition";
+        String headerValue="attachment; filename=cursos"+currentDateTime+".xlsx";
+        response.setHeader(headerKey,headerValue);
+
+        List<Curso>cursos=cursoRepository.findAll();
+
+        CursosExporterExcel exporterExcel=new CursosExporterExcel(cursos);
+        exporterExcel.export(response);
     }
 }
 

@@ -35,10 +35,10 @@ public class CursosExporterExcel {
 
 
         createCell(row,0,"ID",style);
-        createCell(row,1,"Titulo",style);
-        createCell(row,2,"Descripcion",style);
-        createCell(row,3,"Nive",style);
-        createCell(row,4,"estado de publicación",style);
+        createCell(row,1,"Título",style);
+        createCell(row,2,"Descripción",style);
+        createCell(row,3,"Nivel",style);
+        createCell(row,4,"Estado de publicación",style);
     }
     private  void createCell(Row row, int columnCount,Object value, CellStyle style){
         sheet.autoSizeColumn(columnCount);
